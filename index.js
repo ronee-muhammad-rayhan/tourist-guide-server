@@ -111,6 +111,25 @@ async function run() {
         const updatedDoc = {
           $set: {
             role: "admin",
+            isDisabled: true,
+          },
+        };
+        const result = await userCollection.updateOne(filter, updatedDoc);
+        res.send(result);
+      }
+    );
+
+    app.patch(
+      "/users/tour-guide/:id",
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) };
+        const updatedDoc = {
+          $set: {
+            role: "tour-guide",
+            isDisabled: true,
           },
         };
         const result = await userCollection.updateOne(filter, updatedDoc);
@@ -126,25 +145,30 @@ async function run() {
     });
 
     // tour related api
-    app.get("/tour", async (req, res) => {
+    app.get("/tours", async (req, res) => {
       const result = await tourCollection.find().toArray();
       res.send(result);
     });
 
-    app.get("/tour/:id", async (req, res) => {
+    app.get("/tours/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await tourCollection.findOne(query);
       res.send(result);
     });
 
-    app.post("/tour", verifyToken, verifyAdmin, async (req, res) => {
-      const item = req.body;
-      const result = await tourCollection.insertOne(item);
+    // app.post("/tours", verifyToken, verifyAdmin, async (req, res) => {
+    //   const item = req.body;
+    //   const result = await tourCollection.insertOne(item);
+    //   res.send(result);
+    // });
+    app.post("/tours", async (req, res) => {
+      const tour = req.body;
+      const result = await tourCollection.insertOne(tour);
       res.send(result);
     });
 
-    app.patch("/tour/:id", async (req, res) => {
+    app.patch("/tours/:id", async (req, res) => {
       const item = req.body;
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
@@ -162,7 +186,7 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/tour/:id", verifyToken, verifyAdmin, async (req, res) => {
+    app.delete("/tours/:id", verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await tourCollection.deleteOne(query);
