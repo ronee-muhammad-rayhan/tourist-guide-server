@@ -209,6 +209,24 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/dashboard/bookings", verifyToken, async (req, res) => {
+      const email = req.query.email;
+      console.log(email);
+      console.log(req.query);
+
+      if (email !== req.decoded.email) {
+        return res.status(403).send({ message: "forbidden access" });
+      }
+
+      const query = {
+        touristEmail: email,
+      };
+
+      const result = await bookingCollection.find(query).toArray();
+      console.log(result);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
     // console.log(
