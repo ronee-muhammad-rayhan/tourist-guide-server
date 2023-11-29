@@ -208,6 +208,13 @@ async function run() {
       const result = await bookingCollection.insertOne(booking);
       res.send(result);
     });
+    app.post("/bookings/:id", verifyToken, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      //   const booking = req.body;
+      const result = await bookingCollection.findOne(query);
+      res.send(result);
+    });
 
     app.get("/dashboard/bookings", verifyToken, async (req, res) => {
       const email = req.query.email;
@@ -226,6 +233,37 @@ async function run() {
       console.log(result);
       res.send(result);
     });
+
+    app.patch("/bookings/:id", verifyToken, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const booking = req.body;
+      const updatedBooking = {
+        $set: {
+          //   tourPackageTitle: booking?.tourPackageTitle,
+          //   touristName: booking?.touristName,
+          //   touristEmail: booking?.touristEmail,
+          //   touristPhotoURL: booking?.touristPhotoURL,
+          //   guide: booking?.guide,
+          //   price: booking?.price,
+          //   date: booking?.date,
+          status: booking?.status,
+        },
+      };
+      const result = await bookingCollection.updateOne(query, updatedBooking);
+      res.send(result);
+    });
+
+    app.get(
+      "/dashboard/tourist/profile/:email",
+      verifyToken,
+      async (req, res) => {
+        const email = req.params.email;
+        const query = { email: email };
+        const result = await userCollection.findOne(query);
+        res.send(result);
+      }
+    );
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
