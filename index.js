@@ -67,6 +67,14 @@ async function run() {
       next();
     };
 
+    // tour-guides related api
+    app.get("/guides", async (req, res) => {
+      const query = { role: "tour-guide" };
+      const result = await userCollection.find(query).toArray();
+      console.log(result);
+      res.send(result);
+    });
+
     // users related api
     app.get("/users", verifyToken, verifyAdmin, async (req, res) => {
       // console.log(req.headers);
