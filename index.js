@@ -120,6 +120,23 @@ async function run() {
         res.send(user);
       }
     );
+    app.get(
+      "/dashboard/assigned-tours/:email",
+      //   verifyToken,
+      async (req, res) => {
+        const email = req.params.email;
+        console.log(email);
+
+        // if (email !== req.decoded.email) {
+        //   return res.status(403).send({ message: "forbidden access" });
+        // }
+
+        const query = { guide: email };
+        const assignedTours = await bookingCollection.find(query).toArray();
+
+        res.send(assignedTours);
+      }
+    );
 
     app.post("/users", async (req, res) => {
       const user = req.body;
